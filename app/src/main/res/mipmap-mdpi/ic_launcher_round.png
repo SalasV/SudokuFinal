@@ -1,0 +1,88 @@
+package com.example.tnb_20.rebotandobolas;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.widget.ImageView;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class MainActivity extends AppCompatActivity {
+    private int width;
+    private int height;
+    int velocidadX,velocidadY;
+    private float inicioX,inicioY;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        DisplayMetrics display = this.getBaseContext().getResources().getDisplayMetrics();
+        final ImageView bola = findViewById(R.id.imageView);
+        final ImageView pared = findViewById(R.id.imageView5);
+        height = display.heightPixels;;
+        width = display.widthPixels;
+
+
+        velocidadX = 30;
+        velocidadY = 30;
+        inicioX = 0;
+        inicioY = 0;
+
+        TimerTask task = new TimerTask() {
+
+            @Override
+            public void run() {
+                posicionX(bola,pared);
+                //posicionY(bola,pared);
+
+            }
+        };
+
+        Timer t = new Timer();
+        t.schedule(task,100,60);
+    }
+
+    private void posicionX(ImageView bola,ImageView pared) {
+        float siguientePosicionX = bola.getX() + velocidadX;
+
+        if (bola.getX() > 0) {
+            if (siguientePosicionX + bola.getWidth() < width) {
+                bola.setX(siguientePosicionX);
+            } else {
+                bola.setX(width - bola.getWidth());
+                velocidadX = -velocidadX;
+            }
+        }else {
+            if (siguientePosicionX > 0) {
+                bola.setX(siguientePosicionX);
+            } else {
+                bola.setX(0);
+                velocidadX = -velocidadX;
+            }
+        }
+
+        float siguientePosicionY = bola.getY() + velocidadY;
+        if (bola.getY() > 0) {
+            if (siguientePosicionY + bola.getHeight() < height) {
+                bola.setY(siguientePosicionY);
+            } else {
+                bola.setY(height - bola.getHeight());
+                velocidadY = -velocidadY;
+            }
+        }else{
+            if(siguientePosicionY>0){
+                bola.setY(siguientePosicionY);
+            }else{
+                bola.setY(0);
+                velocidadY= -velocidadY;
+            }
+        }
+
+        if(((siguientePosicionX+bola.getWidth()) >= pared.getX()) &&
+                ((siguientePosicionY+bola.getWidth()) >= pared.getY()) &&
+                ((siguientePosicionY+bola.getWidth()) <= (pared.getY() + pared.getHeight()))){
+
+            velocidadX = -velocidadX;
+        }
+    }
